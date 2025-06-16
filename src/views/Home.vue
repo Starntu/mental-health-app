@@ -6,8 +6,10 @@
     <div class="button-container">
       <router-link to="/login">
         <button>Log In</button>
-      </router-link>  
-      <button>Sign Up</button>
+      </router-link> 
+      <router-link to="/signup">
+        <button>Sign Up</button>
+      </router-link>
     </div>
   </div>
 </template>
