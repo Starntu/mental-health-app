@@ -33,6 +33,7 @@ auth.onAuthStateChanged(async (user) => {
       <li v-if="!username"><router-link to="/login">Login</router-link></li>
       <li v-if="!username"><router-link to="/signup">Signup</router-link></li>
       <li v-if="username">Hello, {{ username }}</li>
+      <li v-if="username"><router-link to="/tracker">Tracker</router-link></li>
       <li v-if="username"><button @click="signOutUser">Sign Out</button></li>
     </ul>
   </nav>
