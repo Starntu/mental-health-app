@@ -1,186 +1,437 @@
+<template>
+  <div class="tracker">
+    <button class="add-btn" @click="showForm = true">➕</button>
+
+    <div v-if="showForm" class="overlay">
+      <form id="tracker-form" @submit.prevent="submitEntry">
+        <h2>{{ editingEntryId ? "Edit Your Mood" : "Select Your Mood" }}</h2>
+
+        <div class="emojis">
+          <span
+            v-for="m in moods"
+            :key="m.label"
+            :class="{ selected: selectedMood === m.label }"
+            @click="selectMood(m.label)"
+          >
+            {{ m.emoji }}
+          </span>
+        </div>
+
+        <textarea
+          v-model="journal"
+          placeholder="Optional journal entry..."
+        ></textarea>
+
+        <button type="submit" :disabled="!selectedMood">
+          {{ editingEntryId ? "Update" : "Submit" }}
+        </button>
+      </form>
+    </div>
+
+    <div class="entries">
+      <div v-for="entry in entries" :key="entry.id" class="entry">
+        <span class="entry-header">
+          <span class="entry-emoji">{{
+            moods.find((m) => m.label === entry.mood)?.emoji
+          }}</span>
+          <span class="entry-date">{{ entry.date }}</span>
+        </span>
+
+        <p v-if="entry.journal">{{ entry.journal }}</p>
+        <p v-if="entry.lastEdited">
+          <em
+            >Last edited on
+            {{ new Date(entry.lastEdited).toLocaleDateString() }}</em
+          >
+        </p>
+
+        <button @click="confirmDelete(entry)">🗑</button>
+        <button @click="startEditing(entry)">✏️</button>
+      </div>
+    </div>
+
+    <div v-if="showDeleteConfirm" class="modal">
+      <div class="modal-content">
+        <p>
+          ❗ <strong>Are you sure you want to delete this entry?</strong
+          ><br />This action <strong>cannot be undone</strong>.
+        </p>
+        <button @click="deleteEntry">Yes, delete it</button>
+        <button @click="cancelDelete">Cancel</button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup>
-import { ref } from "vue"
-import { db, auth } from "../firebase"
-import { collection, addDoc, getDocs, query, orderBy, where, deleteDoc, doc, updateDoc } from "firebase/firestore"
-import { onAuthStateChanged } from "firebase/auth"
+import { ref } from "vue";
+import { db, auth } from "../firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  where,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
+// Array of moods
 const moods = [
-    { emoji: "😊", label: "happy" },
-    { emoji: "😢", label: "sad" },
-    { emoji: "😡", label: "angry" },
-    { emoji: "😴", label: "tired" },
-    { emoji: "😰", label: "anxious" },
-    { emoji: "😐", label: "neutral" },
-]
+  { emoji: "😊", label: "happy" },
+  { emoji: "😢", label: "sad" },
+  { emoji: "😡", label: "angry" },
+  { emoji: "😴", label: "tired" },
+  { emoji: "😰", label: "anxious" },
+  { emoji: "😐", label: "neutral" },
+];
 
-const showForm = ref(false)
-const selectedMood = ref("")
-const journal = ref("")
-const entries = ref([])
+// Reactive variables
+const showForm = ref(false);
+const selectedMood = ref("");
+const journal = ref("");
+const entries = ref([]);
 
-const showDeleteConfirm = ref(false)
-const entryToDelete = ref(null)
+// Show or hide the delete confirmation modal when necessary
+const showDeleteConfirm = ref(false);
+// The entry thats been selected to be deleted
+const entryToDelete = ref(null);
 
-const currentUser = ref(null)
+// Info of current logged in user
+const currentUser = ref(null);
 
-const editingEntryId = ref(null)
+// The ID of the entry being edited if editing
+const editingEntryId = ref(null);
 
+// Listen for when the user logs in
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    currentUser.value = user
-    await loadEntries(user.uid)
+    currentUser.value = user;
+    // Load users entries from Firebase
+    await loadEntries(user.uid);
   }
-})
+});
 
+// Function to load users previous entries
 async function loadEntries(uid) {
   const q = query(
     collection(db, "entries"),
-    where("uid", "==", uid),             
-    orderBy("timestamp", "desc")
-  )
-  const querySnapshot = await getDocs(q)
-  entries.value = querySnapshot.docs.map(doc => ({
+    where("uid", "==", uid),
+    orderBy("timestamp", "desc"),
+  );
+  const querySnapshot = await getDocs(q);
+  entries.value = querySnapshot.docs.map((doc) => ({
     id: doc.id,
-    ...doc.data()
-  }))
-  console.log("Entries loaded:", entries.value)
+    ...doc.data(),
+  }));
+  console.log("Entries loaded:", entries.value);
 }
 
+// Function that selects mood when user clicks emoji
 function selectMood(label) {
-  selectedMood.value = label
+  selectedMood.value = label;
 }
 
+// Function to sumbit entry, new or edited
 async function submitEntry() {
-  console.log("🚨 submitEntry triggered")
+  console.log("🚨 submitEntry triggered");
   if (!selectedMood.value) {
-    alert("Please select a mood.")
-    return
+    alert("Please select a mood.");
+    return;
   }
 
   if (editingEntryId.value) {
-    const id = editingEntryId.value
+    const id = editingEntryId.value;
     const updatedData = {
       mood: selectedMood.value,
       journal: journal.value,
-      lastEdited: Date.now()
-    }
+      lastEdited: Date.now(),
+    };
 
-    await updateDoc(doc(db, "entries", id), updatedData)
+    await updateDoc(doc(db, "entries", id), updatedData);
 
-    const index = entries.value.findIndex(e => e.id === id)
+    const index = entries.value.findIndex((e) => e.id === id);
     if (index !== -1) {
       entries.value[index] = {
         ...entries.value[index],
-        ...updatedData
-      }
+        ...updatedData,
+      };
     }
 
-    editingEntryId.value = null
+    editingEntryId.value = null;
   } else {
     const newEntry = {
       mood: selectedMood.value,
       journal: journal.value,
       date: new Date().toLocaleDateString(),
       timestamp: Date.now(),
-      uid: currentUser.value.uid
-    }
+      uid: currentUser.value.uid,
+    };
 
-    const docRef = await addDoc(collection(db, "entries"), newEntry)
-    entries.value.unshift({ id: docRef.id, ...newEntry })
+    const docRef = await addDoc(collection(db, "entries"), newEntry);
+    entries.value.unshift({ id: docRef.id, ...newEntry });
   }
 
-  selectedMood.value = ""
-  journal.value = ""
-  showForm.value = false
+  // Reset form
+  selectedMood.value = "";
+  journal.value = "";
+  showForm.value = false;
 }
 
+// Show delete confirmation modal for entry
 function confirmDelete(entry) {
-  showDeleteConfirm.value = true
-  entryToDelete.value = entry
+  showDeleteConfirm.value = true;
+  entryToDelete.value = entry;
 }
 
+// Function if user cancels deletion
 function cancelDelete() {
-  showDeleteConfirm.value = false
-  entryToDelete.value = null
+  showDeleteConfirm.value = false;
+  entryToDelete.value = null;
 }
 
+// Function that deletes entry and updates interface
 async function deleteEntry() {
   try {
-    const id = entryToDelete.value.id
+    const id = entryToDelete.value.id;
     if (entryToDelete.value.uid !== currentUser.value.uid) {
-      alert("You can only delete your own entries.")
-      return
+      alert("You can only delete your own entries.");
+      return;
     }
-    await deleteDoc(doc(db, "entries", id))
-    entries.value = entries.value.filter(e => e.id !== id)
-    showDeleteConfirm.value = false
-    entryToDelete.value = null
+    await deleteDoc(doc(db, "entries", id));
+    entries.value = entries.value.filter((e) => e.id !== id);
+    showDeleteConfirm.value = false;
+    entryToDelete.value = null;
   } catch (err) {
-    console.error("Failed to delete:", err.message)
+    console.error("Failed to delete:", err.message);
   }
 }
 
+// Function to start editing an already existing entry
 function startEditing(entry) {
-  selectedMood.value = entry.mood
-  journal.value = entry.journal
-  editingEntryId.value = entry.id
-  showForm.value = true
+  selectedMood.value = entry.mood;
+  journal.value = entry.journal;
+  editingEntryId.value = entry.id;
+  showForm.value = true;
 }
 </script>
 
-
-<template>
-    <div class="tracker">
-        <button class="add-btn" @click="showForm = true">➕</button>
-
-        <div v-if="showForm" class="overlay">
-            <form id="tracker-form" @submit.prevent="submitEntry">
-                <h2>{{ editingEntryId ? "Edit Your Mood" : "Select Your Mood" }}</h2>
-                <div class="emojis">
-                    <span
-                        v-for="m in moods"
-                        :key="m.label"
-                        :class="{ selected: selectedMood === m.label }"
-                        @click="selectMood(m.label)"
-                    >
-                        {{ m.emoji }}
-                    </span>
-                </div>
-
-                <textarea v-model="journal" placeholder="Optional journal entry..."></textarea>
-                <button type="submit" :disabled="!selectedMood">{{ editingEntryId ? "Update" : "Submit" }}</button>
-            </form>
-        </div>
-
-        <div class="entries">
-            <div v-for="entry in entries" :key="entry.id" class="entry">
-                <span>{{ entry.date }} - {{ entry.mood }}</span>
-                <p v-if="entry.journal">{{ entry.journal }}</p>
-
-                <p v-if="entry.lastEdited">
-                    <em>Last edited on {{ new Date(entry.lastEdited).toLocaleDateString() }}</em>
-                </p>
-
-                <button @click="confirmDelete(entry)">🗑</button>
-                <button @click="startEditing(entry)">✏️</button>
-            </div>
-        </div>
-
-        <div v-if="showDeleteConfirm" class="modal">
-            <div class="modal-content">
-                <p>❗ <strong>Are you sure you want to delete this entry?</strong><br>This action <strong>cannot be undone</strong>.</p>
-                <button @click="deleteEntry">Yes, delete it</button>
-                <button @click="cancelDelete">Cancel</button>
-            </div>
-        </div>
-    </div>
-</template>
-
 <style scoped>
+.tracker {
+  padding: 2rem;
+  position: relative;
+}
+
+.add-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+  background: linear-gradient(145deg, #4f46e5, #3b82f6);
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  color: white;
+  z-index: 15;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.add-btn:hover {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#tracker-form {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+#tracker-form h2 {
+  margin-bottom: 1.2rem;
+  color: #111;
+}
+
+.emojis {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.emojis span {
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 12px;
+  transition: 0.2s ease;
+}
+
+.emojis span:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .emojis span.selected {
-  border: 2px solid #4CAF50;
+  border: 2px solid #3b82f6;
+  background-color: #e0f0ff;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  margin: 1rem 0;
+  resize: vertical;
+  font-size: 1rem;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.6);
+  color: #213547;
+  transition:
+    background 0.3s,
+    box-shadow 0.3s;
+}
+textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+#tracker-form button[type="submit"] {
+  width: 100%;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 12px;
+  padding: 0.75rem;
+  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#tracker-form button[type="submit"]:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.entries {
+  padding: 2rem 1rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.entry {
+  background: white;
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+.entry span {
+  font-weight: bold;
+  color: #2563eb;
+}
+.entry p {
+  margin-top: 0.5rem;
+  color: #333;
+}
+
+.entry button {
+  margin-left: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #4b5563;
+  transition: color 0.2s;
+}
+.entry button:hover {
+  color: #ef4444;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+.modal-content p {
+  margin-bottom: 1.5rem;
+}
+.modal-content button {
+  margin: 0 0.5rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 8px;
-  background-color: #e6ffe6;
-  padding: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease;
+}
+.modal-content button:first-child {
+  background-color: #ef4444;
+  color: white;
+}
+.modal-content button:first-child:hover {
+  background-color: #dc2626;
+}
+.modal-content button:last-child {
+  background-color: #e5e7eb;
+}
+.modal-content button:last-child:hover {
+  background-color: #d1d5db;
+}
+
+.entry-header {
+  display: flex;
+  align-items: center;
+}
+
+.entry-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.entry-date {
+  font-size: 1rem;
+  margin-left: 0.75rem;
+  color: #2563eb;
 }
 </style>
