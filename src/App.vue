@@ -22,7 +22,7 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav align-items-center gap-3">
-          <!-- When user isn't logged in only show login and signup -->
+          <!-- Only show when user isn't logged in -->
           <li class="nav-item" v-if="!username">
             <router-link class="nav-link" to="/login">Login</router-link>
           </li>
@@ -30,7 +30,7 @@
             <router-link class="nav-link" to="/signup">Signup</router-link>
           </li>
 
-          <!-- When user is logged in only show username greeting, tracker and sign out -->
+          <!-- Only show when user is logged in  -->
           <li
             class="nav-item"
             v-if="username"
@@ -41,6 +41,13 @@
           <li class="nav-item" v-if="username">
             <router-link class="nav-link" to="/tracker">Tracker</router-link>
           </li>
+
+          <!-- Always show -->
+          <li>
+            <router-link class="nav-link" to="/resources">Resources</router-link>
+          </li>
+          
+          <!-- Included in only show when user is logged in-->
           <li class="nav-item" v-if="username">
             <button class="btn btn-outline-primary btn-sm" @click="signOutUser">
               Sign Out
