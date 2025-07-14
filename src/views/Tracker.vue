@@ -4,6 +4,9 @@
 
     <div v-if="showForm" class="overlay">
       <form id="tracker-form" @submit.prevent="submitEntry">
+
+        <button type="button" class="close-btn" @click="cancelForm">✖</button>
+
         <h2>{{ editingEntryId ? "Edit Your Mood" : "Select Your Mood" }}</h2>
 
         <div class="emojis">
@@ -78,16 +81,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-
-// Array of moods
-const moods = [
-  { emoji: "😊", label: "happy" },
-  { emoji: "😢", label: "sad" },
-  { emoji: "😡", label: "angry" },
-  { emoji: "😴", label: "tired" },
-  { emoji: "😰", label: "anxious" },
-  { emoji: "😐", label: "neutral" },
-];
+import { moods } from "../utils/moods.js";
 
 // Reactive variables
 const showForm = ref(false);
@@ -172,7 +166,7 @@ async function submitEntry() {
     };
 
     const docRef = await addDoc(collection(db, "entries"), newEntry);
-    entries.value.unshift({ id: docRef.id, ...newEntry });
+    entries.value.unshift({ id: docRef.id, ...newEntry })
   }
 
   // Reset form
@@ -216,6 +210,14 @@ function startEditing(entry) {
   journal.value = entry.journal;
   editingEntryId.value = entry.id;
   showForm.value = true;
+}
+
+// Function to cancel editing an entry or creating a new entry
+function cancelForm() {
+  selectedMood.value = ""
+  journal.value = ""
+  editingEntryId.value = null
+  showForm.value = false
 }
 </script>
 
@@ -370,6 +372,23 @@ textarea:focus {
   transition: color 0.2s;
 }
 .entry button:hover {
+  color: #ef4444;
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+  z-index: 11;
+}
+
+.close-btn:hover {
   color: #ef4444;
 }
 

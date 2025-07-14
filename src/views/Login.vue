@@ -92,7 +92,7 @@ async function login() {
       password.value,
     );
     console.log("Sucessfully logged in:", userCredential.user);
-    router.push("/");
+    router.push("/dashboard");
   } catch (error) {
     console.error("Error logging in:", error.message);
     alert(error.message);

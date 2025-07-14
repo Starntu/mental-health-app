@@ -3,7 +3,11 @@
     class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 py-3 mb-4"
   >
     <div class="container-fluid">
-      <router-link class="navbar-brand fw-bold text-primary" to="/"
+      <!--- Send to home page if user isn't logged in, otherwise send to dashboard page -->
+      <router-link class="navbar-brand fw-bold text-primary" v-if="!username" to="/"
+        >Track & Mingle</router-link
+      >
+      <router-link class="navbar-brand fw-bold text-primary" v-if="username" to="/dashboard"
         >Track & Mingle</router-link
       >
 

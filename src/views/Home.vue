@@ -21,6 +21,25 @@
   </div>
 </template>
 
+<script setup>
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const router = useRouter();
+const auth = getAuth();
+
+// Take user to dashboard if logged in
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  });
+});
+</script>
+
+
 <style scoped>
 .home-hero {
   max-width: 600px;

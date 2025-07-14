@@ -100,7 +100,7 @@ async function signup() {
     });
 
     // Redirect to home page and then relod after signup
-    await router.push("/");
+    await router.push("/dashboard");
     window.location.reload();
   } catch (error) {
     console.error("Error signing up:", error.message);
