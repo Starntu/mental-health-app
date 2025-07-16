@@ -47,6 +47,9 @@
           </li>
 
           <!-- Always show -->
+           <li>
+              <router-link class="nav-link" to="/breathingTool">Breathing Tool</router-link>
+           </li>
           <li>
             <router-link class="nav-link" to="/resources">Resources</router-link>
           </li>
