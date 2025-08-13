@@ -7,6 +7,8 @@ import Tracker from "./views/Tracker.vue";
 import Resources from "./views/Resources.vue";
 import Dashboard from "./views/Dashboard.vue";
 import BreathingTool from "./views/BreathingTool.vue";
+import PublicChat from "./views/PublicChat.vue";
+import PrivateChatStart from "./views/PrivateChatStart.vue";
 
 const routes = [
   { path: "/", name: "Home", component: Home },
@@ -16,6 +18,9 @@ const routes = [
   { path: "/resources", name: "Resources", component: Resources},
   { path: "/dashboard", name: "Dashboard", component: Dashboard},
   { path: "/breathingTool", name: "Breathing Tool", component: BreathingTool},
+  { path: "/publicChat", name:"Public Chat", component: PublicChat},
+  { path: "/privateChat", name:"Private Chat Start", component: PrivateChatStart },
+  { path: "/privateChat/:targetUsername", name:"Private Chat", component: () => import("./views/PrivateChat.vue"), props: true},
 ];
 
 export const router = createRouter({
