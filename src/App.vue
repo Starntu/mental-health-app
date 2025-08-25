@@ -4,10 +4,16 @@
   >
     <div class="container-fluid">
       <!--- Send to home page if user isn't logged in, otherwise send to dashboard page -->
-      <router-link class="navbar-brand fw-bold text-primary" v-if="!username" to="/"
+      <router-link
+        class="navbar-brand fw-bold text-primary"
+        v-if="!username"
+        to="/"
         >Track & Mingle</router-link
       >
-      <router-link class="navbar-brand fw-bold text-primary" v-if="username" to="/dashboard"
+      <router-link
+        class="navbar-brand fw-bold text-primary"
+        v-if="username"
+        to="/dashboard"
         >Track & Mingle</router-link
       >
 
@@ -46,54 +52,76 @@
             <router-link class="nav-link" to="/tracker">Tracker</router-link>
           </li>
           <li class="nav-item" v-if="username">
-            <router-link class="nav-link" to="/publicChat">Public Chat</router-link>
+            <router-link class="nav-link" to="/publicChat"
+              >Public Chat</router-link
+            >
           </li>
           <li class="nav-item" v-if="username">
-            <router-link class="nav-link" to="/privateChat">Private Chat</router-link>
+            <router-link class="nav-link" to="/privateChat"
+              >Private Chat</router-link
+            >
           </li>
 
           <!-- Always show -->
-           <li>
-              <router-link class="nav-link" to="/breathingTool">Breathing Tool</router-link>
-           </li>
           <li>
-            <router-link class="nav-link" to="/resources">Resources</router-link>
+            <router-link class="nav-link" to="/breathingTool"
+              >Breathing Tool</router-link
+            >
           </li>
-          
+          <li>
+            <router-link class="nav-link" to="/resources"
+              >Resources</router-link
+            >
+          </li>
+
           <!-- Included in only show when user is logged in-->
 
           <!-- Notifications -->
           <li class="nav-item dropdown" v-if="username">
-            <a 
-              class="nav-link dropdown-toggle position-relative" 
-              href="#" 
-              role="button" 
-              data-bs-toggle="dropdown" 
-              aria-expanded="false" 
+            <a
+              class="nav-link dropdown-toggle position-relative"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
               @click="markNotificationsAsRead"
             >
               🔔
-              <span v-if="unreadCount > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle badge-sm">
+              <span
+                v-if="unreadCount > 0"
+                class="badge bg-danger position-absolute top-0 start-100 translate-middle badge-sm"
+              >
                 {{ unreadCount }}
               </span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow">
-              <li v-if="notifications.length === 0" class="dropdown-item text-muted">No notifications</li>
-              <li 
-                v-for="(notif, index) in notifications" 
-                :key="index" 
+              <li
+                v-if="notifications.length === 0"
+                class="dropdown-item text-muted"
+              >
+                No notifications
+              </li>
+              <li
+                v-for="(notif, index) in notifications"
+                :key="index"
                 class="dropdown-item d-flex flex-column"
                 :class="{ 'unread-notif': !notif.read }"
               >
                 <div class="d-flex justify-content-between align-items-center">
                   <span class="notif-message">{{ notif.message }}</span>
-                  <span v-if="!notif.read" class="badge bg-danger rounded-circle ms-2" style="width:8px; height:8px;"></span>
+                  <span
+                    v-if="!notif.read"
+                    class="badge bg-danger rounded-circle ms-2"
+                    style="width: 8px; height: 8px"
+                  ></span>
                 </div>
-                <small class="text-muted">{{ formatDate(notif.timestamp) }}</small>
+                <small class="text-muted">{{
+                  formatDate(notif.timestamp)
+                }}</small>
               </li>
             </ul>
           </li>
-          
+
           <!-- Sign Out -->
           <li class="nav-item" v-if="username">
             <button class="btn btn-outline-primary btn-sm" @click="signOutUser">
@@ -154,13 +182,13 @@ function formatDate(timestamp) {
   return date.toLocaleDateString(undefined, options);
 }
 
-// Function to remove read notifications after 1 day 
+// Function to remove read notifications after 1 day
 async function clearOldReadNotifications(userUid) {
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
   const q = query(
     collection(db, "notifications"),
     where("to", "==", userUid),
-    where("read", "==", true)
+    where("read", "==", true),
   );
   const snapshot = await getDocs(q);
   for (const notifDoc of snapshot.docs) {
@@ -173,7 +201,7 @@ async function clearOldReadNotifications(userUid) {
 
 // Function to mark unread notifications as read when dropdown is opened
 async function markNotificationsAsRead() {
-  const unreadNotifs = notifications.value.filter(n => !n.read);
+  const unreadNotifs = notifications.value.filter((n) => !n.read);
 
   for (const notif of unreadNotifs) {
     const notifRef = doc(db, "notifications", notif.id);
@@ -192,19 +220,22 @@ auth.onAuthStateChanged(async (user) => {
 
     // Clear old notifications before loading new ones
     await clearOldReadNotifications(user.uid);
-    
+
     // Sort notifications newest to oldest
     const notifQuery = query(
       collection(db, "notifications"),
       where("to", "==", user.uid),
-      orderBy("timestamp", "desc")
+      orderBy("timestamp", "desc"),
     );
 
     // Real time updates
     onSnapshot(notifQuery, (snapshot) => {
-      const newNotifs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const newNotifs = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       notifications.value = newNotifs;
-      unreadCount.value = newNotifs.filter(n => !n.read).length;
+      unreadCount.value = newNotifs.filter((n) => !n.read).length;
     });
   } else {
     username.value = "";
@@ -215,7 +246,8 @@ auth.onAuthStateChanged(async (user) => {
 </script>
 
 <style>
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -233,7 +265,7 @@ html, body {
 .navbar {
   background: linear-gradient(90deg, #7b3aed, #9d4edd);
   border-radius: 0 0 1rem 1rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   padding: 1rem 2rem;
 }
 
@@ -260,7 +292,9 @@ html, body {
   border: none;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .card:hover {
@@ -291,7 +325,9 @@ button:hover,
   border: 1px solid #334155;
   color: #f9fafb;
   border-radius: 8px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .form-control:focus {

@@ -3,17 +3,22 @@
     <h2 class="mb-4 text-primary">Chat with {{ targetUsername }}</h2>
 
     <!-- Ban notice for if user is banned -->
-    <div v-if="isBanned" class="alert alert-danger text-center mb-3"> 
-      <template v-if="banPermanent"> 
-        You are <strong>permanently banned</strong> from private chat. 
-      </template> 
-      <template v-else> 
-        You are banned from private chat for <strong>{{ remainingBanDays }}</strong> more day(s). 
-      </template> 
-    </div> 
+    <div v-if="isBanned" class="alert alert-danger text-center mb-3">
+      <template v-if="banPermanent">
+        You are <strong>permanently banned</strong> from private chat.
+      </template>
+      <template v-else>
+        You are banned from private chat for
+        <strong>{{ remainingBanDays }}</strong> more day(s).
+      </template>
+    </div>
 
     <!-- Chat messages -->
-    <div class="card mb-3" style="max-height: 400px; overflow-y: auto;" ref="messagesContainer">
+    <div
+      class="card mb-3"
+      style="max-height: 400px; overflow-y: auto"
+      ref="messagesContainer"
+    >
       <div class="card-body">
         <div
           v-for="message in messages"
@@ -34,7 +39,9 @@
           <button
             class="btn btn-link text-danger p-0 ms-2"
             @click="openReportModal(message.sender, message.id, 'private')"
-          >🚩 Report</button>
+          >
+            🚩 Report
+          </button>
         </div>
       </div>
     </div>
@@ -47,7 +54,9 @@
         :disabled="isBanned"
         placeholder="Type your message..."
       />
-      <button class="btn btn-primary" type="submit" :disabled="isBanned">Send</button>
+      <button class="btn btn-primary" type="submit" :disabled="isBanned">
+        Send
+      </button>
     </form>
 
     <!-- Report modal -->
@@ -55,7 +64,10 @@
       <div class="modal-content">
         <button class="close-btn" @click="closeModal">×</button>
         <h3 class="mb-3">Submit a Report</h3>
-        <p>Thank you for looking out for yourself and others by reporting inappropriate behavior. Please explain your report at the bottom.</p>
+        <p>
+          Thank you for looking out for yourself and others by reporting
+          inappropriate behavior. Please explain your report at the bottom.
+        </p>
 
         <textarea
           v-model="reportReason"
@@ -105,21 +117,21 @@ export default {
     const newMessage = ref("");
     const currentUser = ref("");
     const loading = ref(true);
-    const messagesContainer = ref(null)
+    const messagesContainer = ref(null);
 
     // Profanity filter
     const filter = new Filter();
 
     // Report modal reactive variables
     const showReportModal = ref(false);
-    const reportReason = ref(""); 
-    const reportedUser = ref(""); 
-    const reportedMessageId = ref(""); 
-    const reportedChatType = ref(""); 
+    const reportReason = ref("");
+    const reportedUser = ref("");
+    const reportedMessageId = ref("");
+    const reportedChatType = ref("");
 
     // Ban reactive variables
-    const isBanned = ref(false); 
-    const banPermanent = ref(false); 
+    const isBanned = ref(false);
+    const banPermanent = ref(false);
     const banExpiresTimestamp = ref(null);
 
     // Compute the days remaining in users ban
@@ -129,7 +141,7 @@ export default {
       const expires = banExpiresTimestamp.value.toMillis();
       const diffMs = expires - now;
       return diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : 0;
-    }); 
+    });
 
     const getRoomId = (user1, user2) => {
       return [user1, user2].sort().join("_");
@@ -139,7 +151,8 @@ export default {
     watch(messages, async () => {
       await nextTick();
       if (messagesContainer.value) {
-        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+        messagesContainer.value.scrollTop =
+          messagesContainer.value.scrollHeight;
       }
     });
 
@@ -150,15 +163,19 @@ export default {
       // Stop user from sending messages when banned
       if (isBanned.value) {
         if (banPermanent.value) {
-          alert("You are permanently banned from private chat and cannot send messages.");
+          alert(
+            "You are permanently banned from private chat and cannot send messages.",
+          );
         } else {
-          alert(`You are banned from private chat for ${remainingBanDays.value} more day(s).`); 
+          alert(
+            `You are banned from private chat for ${remainingBanDays.value} more day(s).`,
+          );
         }
         return;
       }
 
       if (await checkBanStatusPrivate(currentUser.value)) return;
-      
+
       if (!newMessage.value.trim()) return;
 
       const roomId = getRoomId(currentUser.value, props.targetUsername);
@@ -172,7 +189,9 @@ export default {
       });
 
       // Send notification to message recipient
-      const targetUserDoc = await getDoc(doc(db, "usernames", props.targetUsername));
+      const targetUserDoc = await getDoc(
+        doc(db, "usernames", props.targetUsername),
+      );
       if (targetUserDoc.exists()) {
         const targetUID = targetUserDoc.data().uid;
 
@@ -191,70 +210,75 @@ export default {
 
     // Check if a user is banned from private chatting
     const checkBanStatusPrivate = async (name) => {
-      const banRef = doc(db, "privateChatBans", name); 
+      const banRef = doc(db, "privateChatBans", name);
       const banSnap = await getDoc(banRef);
       if (banSnap.exists()) {
         const banData = banSnap.data();
         const now = Date.now();
         if (banData.permanent) {
-          isBanned.value = true; 
-          banPermanent.value = true; 
-          banExpiresTimestamp.value = null; 
+          isBanned.value = true;
+          banPermanent.value = true;
+          banExpiresTimestamp.value = null;
           return true;
         }
         if (banData.banExpires && banData.banExpires.toMillis() > now) {
-          isBanned.value = true; 
-          banPermanent.value = false; 
-          banExpiresTimestamp.value = banData.banExpires; 
+          isBanned.value = true;
+          banPermanent.value = false;
+          banExpiresTimestamp.value = banData.banExpires;
           return true;
         }
       }
       return false;
-    }; 
+    };
 
     // Live ban changes in private chat
     const listenForBanChangesPrivate = (name) => {
-      const banRef = doc(db, "privateChatBans", name); 
+      const banRef = doc(db, "privateChatBans", name);
       onSnapshot(banRef, (docSnap) => {
         if (docSnap.exists()) {
           const banData = docSnap.data();
           const now = Date.now();
           if (banData.permanent) {
-            isBanned.value = true; 
-            banPermanent.value = true; 
-            banExpiresTimestamp.value = null; 
-            alert("You are permanently banned from private chat."); 
-          } else if (banData.banExpires && banData.banExpires.toMillis() > now) {
-            isBanned.value = true; 
-            banPermanent.value = false; 
-            banExpiresTimestamp.value = banData.banExpires; 
+            isBanned.value = true;
+            banPermanent.value = true;
+            banExpiresTimestamp.value = null;
+            alert("You are permanently banned from private chat.");
+          } else if (
+            banData.banExpires &&
+            banData.banExpires.toMillis() > now
+          ) {
+            isBanned.value = true;
+            banPermanent.value = false;
+            banExpiresTimestamp.value = banData.banExpires;
             const remainingDays = Math.ceil(
-              (banData.banExpires.toMillis() - now) / (1000 * 60 * 60 * 24)
+              (banData.banExpires.toMillis() - now) / (1000 * 60 * 60 * 24),
             );
-            alert(`You are banned from private chat for ${remainingDays} more day(s).`); 
+            alert(
+              `You are banned from private chat for ${remainingDays} more day(s).`,
+            );
           } else {
             // Ban expired
-            isBanned.value = false; 
-            banPermanent.value = false; 
-            banExpiresTimestamp.value = null; 
+            isBanned.value = false;
+            banPermanent.value = false;
+            banExpiresTimestamp.value = null;
           }
         } else {
           // No ban record
-          isBanned.value = false; 
-          banPermanent.value = false; 
-          banExpiresTimestamp.value = null; 
+          isBanned.value = false;
+          banPermanent.value = false;
+          banExpiresTimestamp.value = null;
         }
       });
-    }; 
+    };
 
     // Keep track of and update report count for private chat ban
     const incrementReportCountPrivate = async (name) => {
       const currentUserUID = auth.currentUser.uid;
-      const banRef = doc(db, "privateChatBans", name); 
-      const banSnap = await getDoc(banRef); 
+      const banRef = doc(db, "privateChatBans", name);
+      const banSnap = await getDoc(banRef);
 
-      let reportCount = 0; 
-      let weekBanCount = 0; 
+      let reportCount = 0;
+      let weekBanCount = 0;
 
       if (banSnap.exists()) {
         const data = banSnap.data();
@@ -289,12 +313,21 @@ export default {
       } else {
         // Up report count if less than 3 (not at ban yet)
         if (banSnap.exists()) {
-          await updateDoc(banRef, { reportCount, uid: currentUserUID, username: name });
+          await updateDoc(banRef, {
+            reportCount,
+            uid: currentUserUID,
+            username: name,
+          });
         } else {
-          await setDoc(banRef, { reportCount, weekBanCount: 0, uid: currentUserUID, username: name });
+          await setDoc(banRef, {
+            reportCount,
+            weekBanCount: 0,
+            uid: currentUserUID,
+            username: name,
+          });
         }
       }
-    }; 
+    };
 
     // Open report modal
     const openReportModal = (user, msgId, chatType) => {
@@ -304,7 +337,7 @@ export default {
       reportedChatType.value = chatType;
       reportReason.value = "";
       showReportModal.value = true;
-    }; 
+    };
 
     // Close report modal
     const closeModal = () => {
@@ -350,14 +383,22 @@ export default {
         if (user) {
           currentUser.value = user.displayName;
 
-          listenForBanChangesPrivate(currentUser.value); 
+          listenForBanChangesPrivate(currentUser.value);
 
           const roomId = getRoomId(currentUser.value, props.targetUsername);
-          const messagesRef = collection(db, "privateMessages", roomId, "messages");
+          const messagesRef = collection(
+            db,
+            "privateMessages",
+            roomId,
+            "messages",
+          );
           const q = query(messagesRef, orderBy("timestamp"));
 
           onSnapshot(q, (snapshot) => {
-            messages.value = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+            messages.value = snapshot.docs.map((d) => ({
+              id: d.id,
+              ...d.data(),
+            }));
             loading.value = false;
           });
         }
@@ -376,10 +417,10 @@ export default {
       reportReason,
       showReportModal,
       submitReport,
-      isBanned, 
-      banPermanent, 
+      isBanned,
+      banPermanent,
       remainingBanDays,
-      checkBanStatusPrivate, 
+      checkBanStatusPrivate,
     };
   },
 };
@@ -391,7 +432,7 @@ export default {
   padding: 2rem;
   border-radius: 1rem;
   color: #ffe5f1;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 h2 {
@@ -402,7 +443,7 @@ h2 {
   background: linear-gradient(90deg, #ff3eb0, #ff8c42);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .card {
@@ -411,13 +452,16 @@ h2 {
   padding: 1rem;
   max-height: 400px;
   overflow-y: auto;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s,
+    background 0.3s;
 }
 
 .card:hover {
   transform: scale(1.02);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
   background: #9d4edd;
 }
 
@@ -427,8 +471,10 @@ h2 {
   margin-bottom: 0.5rem;
   background: #a75ef0;
   color: #ffe5f1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  transition: background 0.3s, transform 0.3s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition:
+    background 0.3s,
+    transform 0.3s;
 }
 
 .card-body > div.text-end {
@@ -440,14 +486,14 @@ h2 {
   transform: scale(1.01);
 }
 
-.text-primary { 
-  color: #ffd700 !important; 
+.text-primary {
+  color: #ffd700 !important;
   cursor: pointer;
   user-select: none;
 }
 
-.text-success { 
-  color: #ff69b4 !important; 
+.text-success {
+  color: #ff69b4 !important;
   cursor: pointer;
   user-select: none;
 }
@@ -457,7 +503,7 @@ h2 {
 }
 
 .card::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
 
@@ -467,8 +513,10 @@ h2 {
   padding: 0.75rem 1rem;
   background: #7b3aed;
   color: #ffe5f1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  transition: transform 0.3s, background 0.3s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s,
+    background 0.3s;
 }
 
 .input-group input.form-control::placeholder {
@@ -487,13 +535,15 @@ h2 {
   background: linear-gradient(135deg, #ff3eb0, #ff8c42);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
 }
 
 .input-group button.btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 button.text-danger {
@@ -509,7 +559,7 @@ button.text-danger {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -523,7 +573,7 @@ button.text-danger {
   width: 90%;
   max-width: 500px;
   color: #ffe5f1;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
   position: relative;
 }
 
@@ -542,7 +592,7 @@ button.text-danger {
   padding: 15px;
   border-radius: 12px;
   font-weight: bold;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .alert-danger {

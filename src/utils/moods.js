@@ -4,5 +4,5 @@ export const moods = [
   { emoji: "😡", label: "angry" },
   { emoji: "😴", label: "tired" },
   { emoji: "😰", label: "anxious" },
-  { emoji: "😐", label: "neutral" }
-]
+  { emoji: "😐", label: "neutral" },
+];

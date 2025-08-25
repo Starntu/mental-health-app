@@ -1,7 +1,10 @@
 <template>
   <div class="container mt-4">
     <h1 class="text-center mb-4">Start a Private Chat</h1>
-    <form @submit.prevent="startChat" class="d-flex gap-2 justify-content-center">
+    <form
+      @submit.prevent="startChat"
+      class="d-flex gap-2 justify-content-center"
+    >
       <input
         v-model="targetUsername"
         type="text"
@@ -61,7 +64,7 @@ const startChat = async () => {
   padding: 2rem;
   background: linear-gradient(135deg, #1e3a8a, #3b82f6);
   border-radius: 1rem;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
   color: #ffe5f1;
   min-height: 60vh;
 }
@@ -73,7 +76,7 @@ h1 {
   background: linear-gradient(90deg, #ff3eb0, #ff8c42);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 form {
@@ -89,9 +92,11 @@ input.form-control {
   border: none;
   background: #7b3aed;
   color: #ffe5f1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  transition: transform 0.3s, background 0.3s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.3s,
+    background 0.3s;
 }
 
 input.form-control::placeholder {
@@ -111,19 +116,21 @@ button.btn-primary {
   background: linear-gradient(135deg, #ff3eb0, #ff8c42);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
 }
 
 button.btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 p.text-danger {
   color: #ff3eb0;
   font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   margin-top: 1rem;
 }
 </style>

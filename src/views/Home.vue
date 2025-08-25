@@ -39,24 +39,25 @@ onMounted(() => {
 });
 </script>
 
-
 <style scoped>
 .home-hero {
   max-width: 600px;
   margin: 80px auto 40px;
   padding: 3rem 2rem;
   border-radius: 1rem;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
   text-align: center;
   color: #ffe5f1;
   user-select: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   cursor: default;
 }
 
 .home-hero:hover {
   transform: translateZ(10px) translateY(-5px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 }
 
 h1 {
@@ -66,7 +67,7 @@ h1 {
   background: linear-gradient(90deg, #ff3eb0, #ff8c42);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 h3 {
@@ -79,7 +80,7 @@ p {
   margin-top: 1.5rem;
   margin-bottom: 0;
   color: #ffe5f1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .button-container button {
@@ -90,15 +91,19 @@ p {
   border: none;
   color: #ffe5f1;
   background: linear-gradient(145deg, #9d4edd, #7b3aed);
-  box-shadow: 0 6px 10px rgba(155,77,237,0.4), inset 0 -3px 5px rgba(255,255,255,0.1);
+  box-shadow:
+    0 6px 10px rgba(155, 77, 237, 0.4),
+    inset 0 -3px 5px rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .button-container button:hover {
   background: linear-gradient(145deg, #7b3aed, #9d4edd);
-  box-shadow: 0 8px 15px rgba(155,77,237,0.6), inset 0 3px 8px rgba(255,255,255,0.2);
+  box-shadow:
+    0 8px 15px rgba(155, 77, 237, 0.6),
+    inset 0 3px 8px rgba(255, 255, 255, 0.2);
   transform: translateY(-3px);
 }
 </style>

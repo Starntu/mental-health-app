@@ -4,7 +4,6 @@
 
     <div v-if="showForm" class="overlay">
       <form id="tracker-form" @submit.prevent="submitEntry">
-
         <button type="button" class="close-btn" @click="cancelForm">✖</button>
 
         <h2>{{ editingEntryId ? "Edit Your Mood" : "Select Your Mood" }}</h2>
@@ -166,7 +165,7 @@ async function submitEntry() {
     };
 
     const docRef = await addDoc(collection(db, "entries"), newEntry);
-    entries.value.unshift({ id: docRef.id, ...newEntry })
+    entries.value.unshift({ id: docRef.id, ...newEntry });
   }
 
   // Reset form
@@ -214,10 +213,10 @@ function startEditing(entry) {
 
 // Function to cancel editing an entry or creating a new entry
 function cancelForm() {
-  selectedMood.value = ""
-  journal.value = ""
-  editingEntryId.value = null
-  showForm.value = false
+  selectedMood.value = "";
+  journal.value = "";
+  editingEntryId.value = null;
+  showForm.value = false;
 }
 </script>
 
@@ -242,11 +241,13 @@ function cancelForm() {
   color: #ffe5f1;
   z-index: 15;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
 }
 .add-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
 }
 
 .overlay {
@@ -272,7 +273,9 @@ function cancelForm() {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   text-align: center;
   color: #ffe5f1;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 #tracker-form h2 {
@@ -281,7 +284,7 @@ function cancelForm() {
   background: linear-gradient(90deg, #ff3eb0, #ff8c42);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .emojis {
@@ -298,10 +301,10 @@ function cancelForm() {
   padding: 8px;
   border-radius: 12px;
   transition: 0.2s ease;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
 }
 .emojis span:hover {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.25);
 }
 .emojis span.selected {
   border: 2px solid #ffd700;
@@ -319,8 +322,10 @@ textarea {
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.25);
   color: #ffe5f1;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
-  transition: background 0.3s, box-shadow 0.3s;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition:
+    background 0.3s,
+    box-shadow 0.3s;
 }
 textarea:focus {
   outline: none;
@@ -338,13 +343,13 @@ textarea:focus {
   color: #ffe5f1;
   border: none;
   cursor: pointer;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
 }
 #tracker-form button[type="submit"]:hover {
   background: linear-gradient(145deg, #9d4edd, #7b3aed);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
 }
 
 .entries {
@@ -358,14 +363,16 @@ textarea:focus {
   border-radius: 16px;
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   position: relative;
   color: #ffe5f1;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
 }
 .entry:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
 .entry-header {
@@ -422,7 +429,7 @@ textarea:focus {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,7 +441,7 @@ textarea:focus {
   padding: 2rem;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   color: #ffe5f1;
 }
 .modal-content p {

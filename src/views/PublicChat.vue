@@ -8,12 +8,17 @@
         You are <strong>permanently banned</strong> from public chat.
       </template>
       <template v-else>
-        You are banned from public chat for <strong>{{ remainingBanDays }}</strong> more day(s).
+        You are banned from public chat for
+        <strong>{{ remainingBanDays }}</strong> more day(s).
       </template>
     </div>
 
     <!-- Chat messages -->
-    <div class="card mb-3" style="height: 400px; overflow-y: auto;" ref="messagesContainer">
+    <div
+      class="card mb-3"
+      style="height: 400px; overflow-y: auto"
+      ref="messagesContainer"
+    >
       <div class="card-body">
         <div
           v-for="message in messages"
@@ -32,10 +37,12 @@
           <p class="mb-2">{{ message.text }}</p>
 
           <!-- report button -->
-          <button 
-            class="btn btn-link text-danger p-0 ms-2" 
+          <button
+            class="btn btn-link text-danger p-0 ms-2"
             @click="openReportModal(message.sender, message.id, 'public')"
-          >🚩 Report</button>
+          >
+            🚩 Report
+          </button>
         </div>
       </div>
     </div>
@@ -48,7 +55,9 @@
         :disabled="isBanned"
         placeholder="Type your message..."
       />
-      <button class="btn btn-primary" type="submit" :disabled="isBanned">Send</button>
+      <button class="btn btn-primary" type="submit" :disabled="isBanned">
+        Send
+      </button>
     </form>
 
     <!-- Report modal -->
@@ -56,12 +65,15 @@
       <div class="modal-content">
         <button class="close-btn" @click="closeModal">×</button>
         <h3 class="mb-3">Submit a Report</h3>
-        <p>Thank you for looking out for yourself and others by reporting inappropriate behavior. Please explain your report at the bottom.</p>
+        <p>
+          Thank you for looking out for yourself and others by reporting
+          inappropriate behavior. Please explain your report at the bottom.
+        </p>
 
-        <textarea 
-          v-model="reportReason" 
-          class="form-control mt-3" 
-          rows="4" 
+        <textarea
+          v-model="reportReason"
+          class="form-control mt-3"
+          rows="4"
           placeholder="Explain your report..."
         ></textarea>
 
@@ -91,23 +103,23 @@ import { db, auth } from "../firebase";
 import { useRouter } from "vue-router";
 import { Filter } from "bad-words";
 
-const router = useRouter()
+const router = useRouter();
 
 // Reactive variables
-const newMessage = ref("")
-const messages = ref([])
-const messagesContainer = ref(null)
-const currentUser = ref("")
+const newMessage = ref("");
+const messages = ref([]);
+const messagesContainer = ref(null);
+const currentUser = ref("");
 
 // Profanity filter
-const filter = new Filter()
+const filter = new Filter();
 
 // Report modal reactive variables
-const showReportModal = ref(false)
-const reportReason = ref("")
-const reportedUser = ref("")
-const reportedMessageId = ref("")
-const reportedChatType = ref("")
+const showReportModal = ref(false);
+const reportReason = ref("");
+const reportedUser = ref("");
+const reportedMessageId = ref("");
+const reportedChatType = ref("");
 
 // Ban reactive variables
 const isBanned = ref(false);
@@ -133,14 +145,18 @@ watch(messages, async () => {
 
 // Send a new message
 const sendMessage = async () => {
-  if (!newMessage.value.trim()) return
+  if (!newMessage.value.trim()) return;
 
   // Stop user from sending messages when banned
   if (isBanned.value) {
     if (banPermanent.value) {
-      alert("You are permanently banned from public chat and cannot send messages.");
+      alert(
+        "You are permanently banned from public chat and cannot send messages.",
+      );
     } else {
-      alert(`You are banned from public chat for ${remainingBanDays.value} more day(s).`); 
+      alert(
+        `You are banned from public chat for ${remainingBanDays.value} more day(s).`,
+      );
     }
     return;
   }
@@ -148,17 +164,17 @@ const sendMessage = async () => {
   if (await checkBanStatusPublic(currentUser.value)) return;
 
   // Filter profanity
-  const cleanText = filter.clean(newMessage.value.trim())
+  const cleanText = filter.clean(newMessage.value.trim());
 
   // Save message
   await addDoc(collection(db, "publicMessages"), {
     sender: currentUser.value,
     text: cleanText,
-    timestamp: serverTimestamp()
-  })
+    timestamp: serverTimestamp(),
+  });
 
-  newMessage.value = ""
-}
+  newMessage.value = "";
+};
 
 // Check if a user is banned from public chatting
 const checkBanStatusPublic = async (name) => {
@@ -200,9 +216,11 @@ const listenForBanChanges = (name) => {
         banPermanent.value = false;
         banExpiresTimestamp.value = banData.banExpires;
         const remainingDays = Math.ceil(
-          (banData.banExpires.toMillis() - now) / (1000 * 60 * 60 * 24)
+          (banData.banExpires.toMillis() - now) / (1000 * 60 * 60 * 24),
         );
-        alert(`You are banned from public chat for ${remainingDays} more day(s).`);
+        alert(
+          `You are banned from public chat for ${remainingDays} more day(s).`,
+        );
       } else {
         // Ban expired
         isBanned.value = false;
@@ -260,9 +278,18 @@ const incrementReportCountPublic = async (name) => {
   } else {
     // Up report count if less than 3 (not at ban yet)
     if (banSnap.exists()) {
-      await updateDoc(banRef, { reportCount, uid: currentUserUID, username: name});
+      await updateDoc(banRef, {
+        reportCount,
+        uid: currentUserUID,
+        username: name,
+      });
     } else {
-      await setDoc(banRef, { reportCount, weekBanCount: 0, uid: currentUserUID, username: name});
+      await setDoc(banRef, {
+        reportCount,
+        weekBanCount: 0,
+        uid: currentUserUID,
+        username: name,
+      });
     }
   }
 };
@@ -275,7 +302,7 @@ const openReportModal = (user, msgId, chatType) => {
   reportedChatType.value = chatType;
   reportReason.value = "";
   showReportModal.value = true;
-}; 
+};
 
 // Close report modal
 const closeModal = () => {
@@ -289,8 +316,8 @@ const closeModal = () => {
 // Submit report to firestore
 const submitReport = async () => {
   if (!reportReason.value.trim()) {
-    alert("Please explain your report before submitting.")
-    return
+    alert("Please explain your report before submitting.");
+    return;
   }
 
   try {
@@ -301,19 +328,19 @@ const submitReport = async () => {
       messageId: reportedMessageId.value,
       chatType: reportedChatType.value,
       reason: reportReason.value.trim(),
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp(),
     });
 
     if (reportedChatType.value === "public") {
       await incrementReportCountPublic(reportedUser.value);
     }
-    alert(`Your report has been submitted.`)
-    closeModal()
+    alert(`Your report has been submitted.`);
+    closeModal();
   } catch (err) {
-    console.error("Failed to submit report:", err)
-    alert("There was a problem submitting your report.")
+    console.error("Failed to submit report:", err);
+    alert("There was a problem submitting your report.");
   }
-}
+};
 
 onMounted(async () => {
   auth.onAuthStateChanged(async (user) => {
@@ -323,9 +350,15 @@ onMounted(async () => {
 
       listenForBanChanges(currentUser.value);
 
-      const q = query(collection(db, "publicMessages"), orderBy("timestamp", "asc"))
+      const q = query(
+        collection(db, "publicMessages"),
+        orderBy("timestamp", "asc"),
+      );
       onSnapshot(q, (snapshot) => {
-        messages.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        messages.value = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
       });
     }
   });
@@ -336,7 +369,7 @@ const goToPrivateChat = (targetUsername) => {
   // Don't allow chatting with self
   if (targetUsername === currentUser.value) return;
   router.push(`/privateChat/${targetUsername}`);
-}
+};
 </script>
 
 <style scoped>
@@ -345,7 +378,7 @@ const goToPrivateChat = (targetUsername) => {
   padding: 2rem;
   border-radius: 1rem;
   color: #ffe5f1;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 h2 {
@@ -356,7 +389,7 @@ h2 {
   background: linear-gradient(90deg, #ff3eb0, #ff8c42);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .card {
@@ -365,13 +398,16 @@ h2 {
   padding: 1rem;
   max-height: 400px;
   overflow-y: auto;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s,
+    background 0.3s;
 }
 
 .card:hover {
   transform: scale(1.02);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
   background: #9d4edd;
 }
 
@@ -381,8 +417,10 @@ h2 {
   margin-bottom: 0.5rem;
   background: #a75ef0;
   color: #ffe5f1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  transition: background 0.3s, transform 0.3s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition:
+    background 0.3s,
+    transform 0.3s;
 }
 
 .card-body > div.text-end {
@@ -394,14 +432,14 @@ h2 {
   transform: scale(1.01);
 }
 
-.text-primary { 
-  color: #ffd700 !important; 
+.text-primary {
+  color: #ffd700 !important;
   cursor: pointer;
   user-select: none;
 }
 
-.text-success { 
-  color: #ff69b4 !important; 
+.text-success {
+  color: #ff69b4 !important;
   cursor: pointer;
   user-select: none;
 }
@@ -411,7 +449,7 @@ h2 {
 }
 
 .card::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
 
@@ -421,8 +459,10 @@ h2 {
   padding: 0.75rem 1rem;
   background: #7b3aed;
   color: #ffe5f1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  transition: transform 0.3s, background 0.3s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s,
+    background 0.3s;
 }
 
 .input-group input.form-control::placeholder {
@@ -441,13 +481,15 @@ h2 {
   background: linear-gradient(135deg, #ff3eb0, #ff8c42);
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
 }
 
 .input-group button.btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 button.text-danger {
@@ -463,7 +505,7 @@ button.text-danger {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -477,7 +519,7 @@ button.text-danger {
   width: 90%;
   max-width: 500px;
   color: #ffe5f1;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
   position: relative;
 }
 
@@ -496,7 +538,7 @@ button.text-danger {
   padding: 15px;
   border-radius: 12px;
   font-weight: bold;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .alert-danger {

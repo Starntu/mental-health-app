@@ -17,105 +17,105 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 
 // List of breathing phases, current phase being stored, and each phase set to 3 seconds
-const phases = ['Inhale', 'Hold', 'Exhale']
-const currentPhase = ref('')
-const countdown = ref(3)
+const phases = ["Inhale", "Hold", "Exhale"];
+const currentPhase = ref("");
+const countdown = ref(3);
 
 // Track if the countdown is running or its been paused
-const isRunning = ref(false)
-const paused = ref(false)
+const isRunning = ref(false);
+const paused = ref(false);
 
 // Track current phase (0 = inhale, 1 = hold, 2 = exhale)
-let phaseIndex = 0
+let phaseIndex = 0;
 // Will hold interval timer and timeout timer
-let countdownTimer = null
-let phaseTimer = null
+let countdownTimer = null;
+let phaseTimer = null;
 
 // Amount of time in each phase in milliseconds
-let remainingTime = 3000
-// Will store timestamp when the current phase started 
-let phaseStartTime = null
+let remainingTime = 3000;
+// Will store timestamp when the current phase started
+let phaseStartTime = null;
 // Will store the exact time user paused
-let pauseTime = null
+let pauseTime = null;
 
 // If the countdown isnt running or is paused, theres no animation for the circle, otherwise return current phase
 const animationClass = computed(() => {
-  if (!isRunning.value || paused.value) return ''
-  return currentPhase.value.toLowerCase() 
-})
+  if (!isRunning.value || paused.value) return "";
+  return currentPhase.value.toLowerCase();
+});
 
 // Function that starts the timer
 function start() {
-  isRunning.value = true
-  paused.value = false
-  phaseIndex = 0
-  remainingTime = 3000
-  runPhase()
+  isRunning.value = true;
+  paused.value = false;
+  phaseIndex = 0;
+  remainingTime = 3000;
+  runPhase();
 }
 
 // Function that pauses timer
 function pause() {
   // Stop both timers
-  clearInterval(countdownTimer)
-  clearTimeout(phaseTimer)
+  clearInterval(countdownTimer);
+  clearTimeout(phaseTimer);
   // Set paused to true
-  paused.value = true
+  paused.value = true;
   // Save timestamp of when user paused
-  pauseTime = Date.now()
+  pauseTime = Date.now();
 
   // Calculate how far into phase the user was when they paused
-  const elapsed = pauseTime - phaseStartTime
+  const elapsed = pauseTime - phaseStartTime;
   // Calculate how much time is left in phase
-  remainingTime = Math.max(0, 3000 - elapsed)
+  remainingTime = Math.max(0, 3000 - elapsed);
 }
 
 // Function that starts/resumes timer from where it was paused
 function resume() {
-  paused.value = false
-  runPhase(true)
+  paused.value = false;
+  runPhase(true);
 }
 
 // Function to end timer and reset everything to default state
 function end() {
-  clearInterval(countdownTimer)
-  clearTimeout(phaseTimer)
-  isRunning.value = false
-  paused.value = false
-  countdown.value = 3
-  currentPhase.value = ''
-  remainingTime = 3000
+  clearInterval(countdownTimer);
+  clearTimeout(phaseTimer);
+  isRunning.value = false;
+  paused.value = false;
+  countdown.value = 3;
+  currentPhase.value = "";
+  remainingTime = 3000;
 }
 
 // Function to start or resume a phase (if isResume is true)
 function runPhase(isResume = false) {
   // Update current phase and record start time of the phase
-  currentPhase.value = phases[phaseIndex]
-  phaseStartTime = Date.now()
+  currentPhase.value = phases[phaseIndex];
+  phaseStartTime = Date.now();
 
   // Convert milliseconds to seconds and display them for user
-  let timeLeft = Math.ceil(remainingTime / 1000)
-  countdown.value = timeLeft
+  let timeLeft = Math.ceil(remainingTime / 1000);
+  countdown.value = timeLeft;
 
   // Update the displayed countdown number every 0.2 seconds
   countdownTimer = setInterval(() => {
-    const elapsed = Date.now() - phaseStartTime
-    countdown.value = Math.max(0, Math.ceil((remainingTime - elapsed) / 1000))
-  }, 200)
+    const elapsed = Date.now() - phaseStartTime;
+    countdown.value = Math.max(0, Math.ceil((remainingTime - elapsed) / 1000));
+  }, 200);
 
   // Move to the next phase in the cycle if the timer isnt paused
   phaseTimer = setTimeout(() => {
-    clearInterval(countdownTimer)
-    phaseIndex = (phaseIndex + 1) % phases.length
-    remainingTime = 3000
-    if (!paused.value) runPhase()
-  }, remainingTime)
+    clearInterval(countdownTimer);
+    phaseIndex = (phaseIndex + 1) % phases.length;
+    remainingTime = 3000;
+    if (!paused.value) runPhase();
+  }, remainingTime);
 
   // If the phase is starting and not resuming, reset remaining Time
   if (!isResume) {
-    remainingTime = 3000
+    remainingTime = 3000;
   }
 }
 </script>
@@ -126,7 +126,7 @@ function runPhase(isResume = false) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-family: "Segoe UI", Roboto, sans-serif;
   padding: 2rem;
   min-height: 100vh;
   background: linear-gradient(135deg, #f3f0ff, #e0d9ff);
@@ -140,7 +140,7 @@ function runPhase(isResume = false) {
   background: linear-gradient(90deg, #ffb347, #ff3eb0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .circle {
@@ -155,7 +155,9 @@ function runPhase(isResume = false) {
   font-size: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: 0 0 30px rgba(123, 58, 237, 0.3);
-  transition: transform 3s ease-in-out, box-shadow 0.3s ease;
+  transition:
+    transform 3s ease-in-out,
+    box-shadow 0.3s ease;
 }
 
 .inhale {
@@ -174,13 +176,21 @@ function runPhase(isResume = false) {
 }
 
 @keyframes inhaleAnim {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.3); }
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.3);
+  }
 }
 
 @keyframes exhaleAnim {
-  0% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .countdown {
@@ -188,7 +198,7 @@ function runPhase(isResume = false) {
   opacity: 0.85;
   margin-top: 0.2rem;
   color: #ffb347;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .controls {
