@@ -129,41 +129,48 @@ function runPhase(isResume = false) {
   font-family: 'Segoe UI', Roboto, sans-serif;
   padding: 2rem;
   min-height: 100vh;
-  background: #f8fbff;
-  color: #003366;
+  background: linear-gradient(135deg, #f3f0ff, #e0d9ff);
+  color: #3b0ac8;
 }
 
 .title {
   font-size: 2rem;
   margin-bottom: 2rem;
-  font-weight: 600;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ffb347, #ff3eb0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .circle {
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: #e0f0ff;
+  background: rgba(123, 58, 237, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 0 25px rgba(0, 106, 255, 0.1);
-  transition: transform 3s ease-in-out;
+  box-shadow: 0 0 30px rgba(123, 58, 237, 0.3);
+  transition: transform 3s ease-in-out, box-shadow 0.3s ease;
 }
 
 .inhale {
   animation: inhaleAnim 3s ease-in-out forwards;
+  box-shadow: 0 0 40px rgba(123, 58, 237, 0.6);
 }
 
 .hold {
   animation: none;
+  box-shadow: 0 0 25px rgba(123, 58, 237, 0.4);
 }
 
 .exhale {
   animation: exhaleAnim 3s ease-in-out forwards;
+  box-shadow: 0 0 20px rgba(123, 58, 237, 0.2);
 }
 
 @keyframes inhaleAnim {
@@ -178,8 +185,10 @@ function runPhase(isResume = false) {
 
 .countdown {
   font-size: 1.2rem;
-  opacity: 0.8;
+  opacity: 0.85;
   margin-top: 0.2rem;
+  color: #ffb347;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .controls {
@@ -190,24 +199,25 @@ function runPhase(isResume = false) {
 }
 
 .controls button {
-  background-color: #007bff;
-  color: white;
+  background: linear-gradient(135deg, #7b3aed, #9d4edd);
+  color: #ffe5f1;
   border: none;
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.1);
-  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 3px 12px rgba(123, 58, 237, 0.3);
+  transition: all 0.3s ease;
 }
 
 .controls button:hover:not(:disabled) {
-  background-color: #0066d4;
   transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(123, 58, 237, 0.5);
 }
 
 .controls button:disabled {
-  background-color: #bcd9f8;
+  background-color: rgba(123, 58, 237, 0.3);
   cursor: not-allowed;
+  color: #ddd;
 }
 </style>

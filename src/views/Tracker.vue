@@ -225,6 +225,7 @@ function cancelForm() {
 .tracker {
   padding: 2rem;
   position: relative;
+  color: #ffe5f1;
 }
 
 .add-btn {
@@ -234,17 +235,18 @@ function cancelForm() {
   width: 60px;
   height: 60px;
   font-size: 2rem;
-  background: linear-gradient(145deg, #4f46e5, #3b82f6);
+  background: linear-gradient(145deg, #7b3aed, #9d4edd);
   border: none;
   border-radius: 50%;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  color: white;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  color: #ffe5f1;
   z-index: 15;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 .add-btn:hover {
   transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.4);
 }
 
 .overlay {
@@ -261,18 +263,25 @@ function cancelForm() {
 }
 
 #tracker-form {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(123, 58, 237, 0.85);
+  backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 2rem;
   max-width: 400px;
   width: 90%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   text-align: center;
+  color: #ffe5f1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 #tracker-form h2 {
   margin-bottom: 1.2rem;
-  color: #111;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ff3eb0, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .emojis {
@@ -289,15 +298,14 @@ function cancelForm() {
   padding: 8px;
   border-radius: 12px;
   transition: 0.2s ease;
+  background: rgba(255,255,255,0.15);
 }
-
 .emojis span:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background: rgba(255,255,255,0.25);
 }
-
 .emojis span.selected {
-  border: 2px solid #3b82f6;
-  background-color: #e0f0ff;
+  border: 2px solid #ffd700;
+  background-color: rgba(255, 182, 255, 0.3);
 }
 
 textarea {
@@ -309,17 +317,15 @@ textarea {
   margin: 1rem 0;
   resize: vertical;
   font-size: 1rem;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
-  background: rgba(255, 255, 255, 0.6);
-  color: #213547;
-  transition:
-    background 0.3s,
-    box-shadow 0.3s;
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffe5f1;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 textarea:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.25);
 }
 
 #tracker-form button[type="submit"] {
@@ -328,16 +334,17 @@ textarea:focus {
   font-size: 1rem;
   border-radius: 12px;
   padding: 0.75rem;
-  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-  background-color: #3b82f6;
-  color: white;
+  background: linear-gradient(145deg, #7b3aed, #9d4edd);
+  color: #ffe5f1;
   border: none;
   cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
   transition: all 0.3s ease;
 }
 #tracker-form button[type="submit"]:hover {
-  background-color: #2563eb;
+  background: linear-gradient(145deg, #9d4edd, #7b3aed);
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45);
 }
 
 .entries {
@@ -345,21 +352,39 @@ textarea:focus {
   max-width: 700px;
   margin: 0 auto;
 }
+
 .entry {
-  background: white;
+  background: #7b3aed;
   border-radius: 16px;
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
   position: relative;
+  color: #ffe5f1;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
-.entry span {
-  font-weight: bold;
-  color: #2563eb;
+.entry:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
 }
+
+.entry-header {
+  display: flex;
+  align-items: center;
+}
+
+.entry-emoji {
+  font-size: 2rem;
+}
+
+.entry-date {
+  font-size: 1rem;
+  margin-left: 0.75rem;
+  color: #ffd700;
+}
+
 .entry p {
   margin-top: 0.5rem;
-  color: #333;
 }
 
 .entry button {
@@ -368,11 +393,11 @@ textarea:focus {
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #4b5563;
+  color: #ffe5f1;
   transition: color 0.2s;
 }
 .entry button:hover {
-  color: #ef4444;
+  color: #ffb347;
 }
 
 .close-btn {
@@ -383,13 +408,12 @@ textarea:focus {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #555;
+  color: #ffe5f1;
   transition: color 0.2s ease;
   z-index: 11;
 }
-
 .close-btn:hover {
-  color: #ef4444;
+  color: #ffb347;
 }
 
 .modal {
@@ -398,19 +422,20 @@ textarea:focus {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 20;
 }
 .modal-content {
-  background: white;
+  background: #7b3aed;
   border-radius: 12px;
   padding: 2rem;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  color: #ffe5f1;
 }
 .modal-content p {
   margin-bottom: 1.5rem;
@@ -432,25 +457,9 @@ textarea:focus {
   background-color: #dc2626;
 }
 .modal-content button:last-child {
-  background-color: #e5e7eb;
+  background-color: #9d4edd;
 }
 .modal-content button:last-child:hover {
-  background-color: #d1d5db;
-}
-
-.entry-header {
-  display: flex;
-  align-items: center;
-}
-
-.entry-emoji {
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.entry-date {
-  font-size: 1rem;
-  margin-left: 0.75rem;
-  color: #2563eb;
+  background-color: #7b3aed;
 }
 </style>

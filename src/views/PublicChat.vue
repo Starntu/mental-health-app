@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-4">
-    <h1 class="text-center mb-4">Track and Mingle — Public Chat</h1>
+    <h2 class="text-center mb-4">Public Chat</h2>
 
     <!-- Ban notice for if user is banned -->
     <div v-if="isBanned" class="alert alert-danger text-center mb-3">
@@ -18,16 +18,18 @@
         <div
           v-for="message in messages"
           :key="message.id"
-          class="mb-3 border-bottom pb-2"
+          :class="{ 'text-end': message.sender === currentUser }"
         >
           <strong
-            class="text-primary"
-            style="cursor: pointer"
+            :class="{
+              'text-primary': message.sender === currentUser,
+              'text-success': message.sender !== currentUser,
+            }"
             @click="goToPrivateChat(message.sender)"
           >
             {{ message.sender }}
           </strong>
-          : {{ message.message }}
+          <p class="mb-2">{{ message.text }}</p>
 
           <!-- report button -->
           <button 
@@ -95,7 +97,7 @@ const router = useRouter()
 const newMessage = ref("")
 const messages = ref([])
 const messagesContainer = ref(null)
-const username = ref("")
+const currentUser = ref("")
 
 // Profanity filter
 const filter = new Filter()
@@ -143,15 +145,15 @@ const sendMessage = async () => {
     return;
   }
 
-  if (await checkBanStatusPublic(username.value)) return;
+  if (await checkBanStatusPublic(currentUser.value)) return;
 
   // Filter profanity
-  const cleanMessage = filter.clean(newMessage.value.trim())
+  const cleanText = filter.clean(newMessage.value.trim())
 
   // Save message
   await addDoc(collection(db, "publicMessages"), {
-    sender: username.value,
-    message: cleanMessage,
+    sender: currentUser.value,
+    text: cleanText,
     timestamp: serverTimestamp()
   })
 
@@ -260,14 +262,14 @@ const incrementReportCountPublic = async (name) => {
     if (banSnap.exists()) {
       await updateDoc(banRef, { reportCount, uid: currentUserUID, username: name});
     } else {
-      await setDoc(banRef, { reportCount, weekBanCount: 0, uid: currentUserUID, username: name})
+      await setDoc(banRef, { reportCount, weekBanCount: 0, uid: currentUserUID, username: name});
     }
   }
 };
 
 // Open report modal
 const openReportModal = (user, msgId, chatType) => {
-  if (user === username.value) return;
+  if (user === currentUser.value) return;
   reportedUser.value = user;
   reportedMessageId.value = msgId;
   reportedChatType.value = chatType;
@@ -317,9 +319,9 @@ onMounted(async () => {
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       await user.reload();
-      username.value = user.displayName;
+      currentUser.value = user.displayName;
 
-      listenForBanChanges(username.value);
+      listenForBanChanges(currentUser.value);
 
       const q = query(collection(db, "publicMessages"), orderBy("timestamp", "asc"))
       onSnapshot(q, (snapshot) => {
@@ -332,26 +334,76 @@ onMounted(async () => {
 // Let users private chat after clicking on username
 const goToPrivateChat = (targetUsername) => {
   // Don't allow chatting with self
-  if (targetUsername === username.value) return;
+  if (targetUsername === currentUser.value) return;
   router.push(`/privateChat/${targetUsername}`);
 }
 </script>
 
 <style scoped>
+.container {
+  min-height: 100vh;
+  padding: 2rem;
+  border-radius: 1rem;
+  color: #ffe5f1;
+  font-family: 'Arial', sans-serif;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: linear-gradient(90deg, #ff3eb0, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
 .card {
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-  border-radius: 12px;
+  background: #7b3aed;
+  border-radius: 1rem;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  background: #9d4edd;
 }
 
 .card-body > div {
   padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  background: #a75ef0;
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  transition: background 0.3s, transform 0.3s;
+}
+
+.card-body > div.text-end {
+  align-items: flex-end;
 }
 
 .card-body > div:hover {
-  background-color: #e9ecef;
+  background: #b87cf2;
+  transform: scale(1.01);
+}
+
+.text-primary { 
+  color: #ffd700 !important; 
+  cursor: pointer;
+  user-select: none;
+}
+
+.text-success { 
+  color: #ff69b4 !important; 
+  cursor: pointer;
+  user-select: none;
 }
 
 .card::-webkit-scrollbar {
@@ -359,13 +411,43 @@ const goToPrivateChat = (targetUsername) => {
 }
 
 .card::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0,0,0,0.2);
   border-radius: 4px;
 }
 
-strong.text-primary {
-  cursor: pointer;
-  user-select: none;
+.input-group input.form-control {
+  border-radius: 1rem;
+  border: none;
+  padding: 0.75rem 1rem;
+  background: #7b3aed;
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.input-group input.form-control::placeholder {
+  color: #ffb6ff;
+  opacity: 0.8;
+}
+
+.input-group input.form-control:focus {
+  outline: none;
+  background: #9d4edd;
+  transform: scale(1.02);
+}
+
+.input-group button.btn-primary {
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #ff3eb0, #ff8c42);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.input-group button.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
 }
 
 button.text-danger {
@@ -381,7 +463,7 @@ button.text-danger {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -389,12 +471,13 @@ button.text-danger {
 }
 
 .modal-content {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
+  background: #7b3aed;
+  padding: 2rem;
+  border-radius: 1rem;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  color: #ffe5f1;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.4);
   position: relative;
 }
 
@@ -405,19 +488,20 @@ button.text-danger {
   font-size: 1.25rem;
   background: none;
   border: none;
-  color: #333;
+  color: #fff;
   cursor: pointer;
 }
 
 .alert {
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .alert-danger {
-  background-color: #f8d7da;
-  color: #842029;
-  border: 1px solid #f5c2c7;
+  background: #ff3eb0;
+  color: #fff;
+  border: 1px solid #ff8c42;
 }
 </style>

@@ -51,11 +51,29 @@ const articles = [
 ]
 </script>
 
-<style scope>
+<style scoped>
 .resources {
-  padding: 20px;
+  padding: 2rem;
   max-width: 800px;
-  margin: auto;
+  margin: 2rem auto;
+  color: #ffe5f1;
+}
+
+.resources h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: linear-gradient(90deg, #ff3eb0, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.hotlines {
+  padding: 0;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .hotlines li {
@@ -64,35 +82,58 @@ const articles = [
 }
 
 .hotlines a {
-  color: #2563eb;
-  text-decoration: none;
+  color: #ffd700;
   font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s, text-shadow 0.3s;
 }
 
 .hotlines a:hover {
-  text-decoration: underline;
+  color: #ffb347;
+  text-shadow: 0 0 8px #ffec99;
 }
 
 .articles {
-  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .article {
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  background: #7b3aed;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.article:hover {
+  transform: translateZ(10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
 }
 
 .article h3 {
-  margin: 0 0 10px;
-  color: #1e40af;
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.article p {
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  margin-bottom: 0.75rem;
 }
 
 .article a {
   display: inline-block;
-  margin-top: 10px;
-  color: #1d4ed8;
+  color: #ffb347;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.article a:hover {
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffec99;
 }
 </style>

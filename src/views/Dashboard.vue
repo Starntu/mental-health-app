@@ -14,8 +14,8 @@
 
         <section class="card">
             <h2>Mood Streaks</h2>
-            <p>🔥 Current streak: <span class="streak-number">{{ currentStreak }}</span> days</p>
-            <p>🏆 Longest streak: <span class="streak-number">{{ longestStreak }}</span> days</p>
+            <p>🔥 Current streak: <span class="streak-number">{{ currentStreak }}</span> day(s)</p>
+            <p>🏆 Longest streak: <span class="streak-number">{{ longestStreak }}</span> day(s)</p>
         </section>
 
         <section class="card">
@@ -277,46 +277,66 @@ const entryStats = computed(() => {
 
 <style scoped>
 .dashboard {
+  min-height: 100vh;
   padding: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
-  font-family: "Segoe UI", sans-serif;
-  color: #1f2937;
+  text-align: center;
 }
 
 .title {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 2rem;
   text-align: center;
-  color: #3b82f6;
+  background: linear-gradient(90deg, #ff3eb0, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .card {
-  background: white;
-  border-radius: 20px;
+  background: #7b3aed;
+  border-radius: 1rem;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+  transition: transform 0.4s, box-shadow 0.4s, background 0.4s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "✨";
+  position: absolute;
+  font-size: 4rem;
+  top: 10px;
+  right: 10px;
+  opacity: 0.3;
+  animation: float 5s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .card:hover {
-  transform: scale(1.01);
+  transform: translateZ(10px) scale(1.03) rotateZ(1deg);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  background: #9d4edd;
 }
 
 .card h2 {
-  font-size: 1.5rem;
-  color: #111827;
+  font-size: 1.6rem;
+  text-align: center;
+  color: #ffd700;
   margin-bottom: 1rem;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #ffb347;
   padding-left: 0.75rem;
 }
 
 .card p {
   font-size: 1.1rem;
+  text-align: center;
   margin: 0.5rem 0;
-  color: #374151;
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
 canvas {
@@ -326,29 +346,39 @@ canvas {
 }
 
 .streak-number {
-  font-weight: bold;
-  color: #f59e0b; /* golden color */
-  font-size: 1.2em;
+  font-weight: 800;
+  color: #ffd700;
+  font-size: 1.4em;
+  text-shadow: 0 0 10px #ffec99;
+  text-align: center;
 }
 
 .entry-stats {
   margin-top: 2rem;
   padding: 1.5rem;
-  background: #f9fafb;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background: #7b3aed;
+  border-radius: 1rem;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
 }
 
 .entry-stats p {
   font-size: 1rem;
   margin: 0.5rem 0;
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  text-align: center;
 }
 
 .no-data-message {
   text-align: center;
   padding: 2rem;
-  color: #6b7280;
+  color: #ffb6ff;
   font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(20deg); }
 }
 </style>
-

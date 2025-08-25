@@ -12,9 +12,8 @@
       </template> 
     </div> 
 
-    <div v-if="loading">Loading messages...</div>
     <!-- Chat messages -->
-    <div v-else class="card p-3" style="max-height: 400px; overflow-y: auto;" ref="messagesContainer">
+    <div class="card mb-3" style="max-height: 400px; overflow-y: auto;" ref="messagesContainer">
       <div class="card-body">
         <div
           v-for="message in messages"
@@ -40,17 +39,16 @@
       </div>
     </div>
 
-    <div class="input-group mt-3">
+    <form @submit.prevent="sendMessage" class="d-flex gap-2">
       <input
-        type="text"
         v-model="newMessage"
+        type="text"
         class="form-control"
-        placeholder="Type a message"
-        @keyup.enter="sendMessage"
         :disabled="isBanned"
+        placeholder="Type your message..."
       />
-      <button class="btn btn-primary" @click="sendMessage" :disabled="isBanned">Send</button>
-    </div>
+      <button class="btn btn-primary" type="submit" :disabled="isBanned">Send</button>
+    </form>
 
     <!-- Report modal -->
     <div v-if="showReportModal" class="modal-backdrop">
@@ -65,6 +63,7 @@
           rows="4"
           placeholder="Explain your report..."
         ></textarea>
+
         <div class="d-flex justify-content-end mt-3">
           <button class="btn btn-danger" @click="submitReport">Submit</button>
         </div>
@@ -290,9 +289,9 @@ export default {
       } else {
         // Up report count if less than 3 (not at ban yet)
         if (banSnap.exists()) {
-          await updateDoc(banRef, { reportCount });
+          await updateDoc(banRef, { reportCount, uid: currentUserUID, username: name });
         } else {
-          await setDoc(banRef, { reportCount, weekBanCount: 0, uid: currentUserUID, username: name, });
+          await setDoc(banRef, { reportCount, weekBanCount: 0, uid: currentUserUID, username: name });
         }
       }
     }; 
@@ -387,20 +386,70 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  min-height: 100vh;
+  padding: 2rem;
+  border-radius: 1rem;
+  color: #ffe5f1;
+  font-family: 'Arial', sans-serif;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: linear-gradient(90deg, #ff3eb0, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
 .card {
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-  border-radius: 12px;
+  background: #7b3aed;
+  border-radius: 1rem;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  background: #9d4edd;
 }
 
 .card-body > div {
   padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  background: #a75ef0;
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  transition: background 0.3s, transform 0.3s;
+}
+
+.card-body > div.text-end {
+  align-items: flex-end;
 }
 
 .card-body > div:hover {
-  background-color: #e9ecef;
+  background: #b87cf2;
+  transform: scale(1.01);
+}
+
+.text-primary { 
+  color: #ffd700 !important; 
+  cursor: pointer;
+  user-select: none;
+}
+
+.text-success { 
+  color: #ff69b4 !important; 
+  cursor: pointer;
+  user-select: none;
 }
 
 .card::-webkit-scrollbar {
@@ -408,14 +457,43 @@ export default {
 }
 
 .card::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0,0,0,0.2);
   border-radius: 4px;
 }
 
-strong.text-primary,
-strong.text-success {
-  cursor: pointer;
-  user-select: none;
+.input-group input.form-control {
+  border-radius: 1rem;
+  border: none;
+  padding: 0.75rem 1rem;
+  background: #7b3aed;
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.input-group input.form-control::placeholder {
+  color: #ffb6ff;
+  opacity: 0.8;
+}
+
+.input-group input.form-control:focus {
+  outline: none;
+  background: #9d4edd;
+  transform: scale(1.02);
+}
+
+.input-group button.btn-primary {
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #ff3eb0, #ff8c42);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.input-group button.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
 }
 
 button.text-danger {
@@ -431,7 +509,7 @@ button.text-danger {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -439,12 +517,13 @@ button.text-danger {
 }
 
 .modal-content {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
+  background: #7b3aed;
+  padding: 2rem;
+  border-radius: 1rem;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  color: #ffe5f1;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.4);
   position: relative;
 }
 
@@ -455,18 +534,20 @@ button.text-danger {
   font-size: 1.25rem;
   background: none;
   border: none;
-  color: #333;
+  color: #fff;
   cursor: pointer;
 }
 
 .alert {
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
+
 .alert-danger {
-  background-color: #f8d7da;
-  color: #842029;
-  border: 1px solid #f5c2c7;
+  background: #ff3eb0;
+  color: #fff;
+  border: 1px solid #ff8c42;
 }
 </style>

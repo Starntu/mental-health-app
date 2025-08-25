@@ -105,20 +105,26 @@ async function login() {
   max-width: 400px;
   margin: 80px auto;
   padding: 2.5rem 2rem;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
   text-align: center;
-  color: var(--primary-color);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  color: #ffe5f1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .login-container:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  background: linear-gradient(90deg, #ff3eb0, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .floating-label {
@@ -129,14 +135,14 @@ async function login() {
 
 .floating-label input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.15);
   border: none;
-  border-radius: 12px;
+  border-radius: 1rem;
   padding: 1.25rem 1rem 0.5rem;
-  color: #213547;
+  color: #ffe5f1;
   font-size: 1rem;
   transition: all 0.3s ease;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .floating-label label {
@@ -144,7 +150,7 @@ async function login() {
   top: 1.05rem;
   left: 1rem;
   font-size: 1rem;
-  color: #666;
+  color: #ffe5f1;
   pointer-events: none;
   transition: 0.2s ease all;
 }
@@ -154,37 +160,7 @@ async function login() {
   top: 0.3rem;
   left: 1rem;
   font-size: 0.75rem;
-  color: var(--primary-color);
-}
-
-.btn {
-  width: 100%;
-  font-weight: 600;
-  font-size: 1rem;
-  border-radius: 12px;
-  padding: 0.75rem;
-  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-  transition: all 0.3s ease;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-}
-
-.btn:hover {
-  background-color: var(--secondary-color);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(30, 64, 175, 0.5);
-}
-
-.remember-me {
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  color: #333;
+  color: #ffd700;
 }
 
 button {
@@ -192,30 +168,34 @@ button {
   padding: 0.85rem;
   font-weight: 700;
   font-size: 1.1rem;
-  border-radius: 14px;
+  border-radius: 1rem;
   border: none;
-  color: white;
-  background: linear-gradient(145deg, #4a90e2, #357abd);
-  box-shadow:
-    0 6px 10px rgba(53, 122, 189, 0.4),
-    inset 0 -3px 5px rgba(255, 255, 255, 0.2);
+  color: #ffe5f1;
+  background: linear-gradient(145deg, #9d4edd, #7b3aed);
+  box-shadow: 0 6px 10px rgba(155,77,237,0.4), inset 0 -3px 5px rgba(255,255,255,0.1);
   cursor: pointer;
   transition: all 0.3s ease;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
 
 button:hover {
-  background: linear-gradient(145deg, #357abd, #2a5f9e);
-  box-shadow:
-    0 8px 15px rgba(41, 84, 141, 0.6),
-    inset 0 3px 8px rgba(255, 255, 255, 0.3);
+  background: linear-gradient(145deg, #7b3aed, #9d4edd);
+  box-shadow: 0 8px 15px rgba(155,77,237,0.6), inset 0 3px 8px rgba(255,255,255,0.2);
   transform: translateY(-3px);
 }
 
 button:active {
-  box-shadow:
-    0 3px 6px rgba(41, 84, 141, 0.4),
-    inset 0 1px 3px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 3px 6px rgba(155,77,237,0.4), inset 0 1px 3px rgba(255,255,255,0.15);
   transform: translateY(0);
+}
+
+label[for="remember me"] {
+  font-size: 0.9rem;
+  color: #ffd700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
 }
 </style>

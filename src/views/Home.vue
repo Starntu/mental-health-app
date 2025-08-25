@@ -45,55 +45,60 @@ onMounted(() => {
   max-width: 600px;
   margin: 80px auto 40px;
   padding: 3rem 2rem;
-  background: rgba(255 255 255 / 0.3);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
   text-align: center;
-  color: var(--primary-color);
+  color: #ffe5f1;
   user-select: none;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: default;
 }
 
 .home-hero:hover {
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
   transform: translateZ(10px) translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
 }
 
 h1 {
   font-size: 3rem;
   margin-bottom: 0.25em;
-  color: var(--primary-color);
+  font-weight: 800;
+  background: linear-gradient(90deg, #ff3eb0, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 h3 {
   margin-top: 0;
   font-weight: 500;
-  color: var(--secondary-color);
+  color: #ffd700;
 }
 
 p {
   margin-top: 1.5rem;
   margin-bottom: 0;
-  color: #555;
+  color: #ffe5f1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
 .button-container button {
-  font-weight: 600;
-  font-size: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.3s ease;
+  width: 200px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 1rem;
+  border: none;
+  color: #ffe5f1;
+  background: linear-gradient(145deg, #9d4edd, #7b3aed);
+  box-shadow: 0 6px 10px rgba(155,77,237,0.4), inset 0 -3px 5px rgba(255,255,255,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
 
 .button-container button:hover {
-  box-shadow: 0 10px 25px rgba(30, 64, 175, 0.5);
+  background: linear-gradient(145deg, #7b3aed, #9d4edd);
+  box-shadow: 0 8px 15px rgba(155,77,237,0.6), inset 0 3px 8px rgba(255,255,255,0.2);
   transform: translateY(-3px);
 }
 </style>

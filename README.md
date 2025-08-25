@@ -1,3 +1,7 @@
-# mental-health-app
+# Track & Mingle
 
-A web app made for the Congressional App Challenge aimed at mental health. It includes but is not limited to health tracking, journaling, and more.
+Track and Mingle is a web app made for the Congressional App Challenge aimed at mental health. 
+
+## Features
+
+It includes but is not limited to mood tracking, chatting with other users, and finding new resources on mental health. 

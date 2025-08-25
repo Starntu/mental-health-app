@@ -215,12 +215,108 @@ auth.onAuthStateChanged(async (user) => {
 </script>
 
 <style>
-.unread-notif {
-  background-color: #e9f5ff;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+}
+</style>
+
+<style scoped>
+#app {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  min-height: 100vh;
+  color: #f9fafb;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #7b3aed, #9d4edd);
+  border-radius: 0 0 1rem 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  padding: 1rem 2rem;
+}
+
+.navbar-brand {
   font-weight: bold;
+  font-size: 1.5rem;
+  background: linear-gradient(90deg, #ff7eb3, #ff758c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+  color: #f9fafb !important;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #ffd700 !important;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+}
+
+.card {
+  background: #1e293b;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+}
+
+button,
+.btn {
+  background: linear-gradient(90deg, #6a11cb, #9d4edd);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 16px;
+  transition: all 0.3s ease;
+}
+
+button:hover,
+.btn:hover {
+  background: #9d4edd;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(157, 78, 221, 0.7); /* glow effect */
+}
+
+.form-control {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f9fafb;
+  border-radius: 8px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #9d4edd;
+  box-shadow: 0 0 10px rgba(157, 78, 221, 0.6);
+  outline: none;
+}
+
+.unread-notif {
+  background-color: rgba(155, 135, 255, 0.15); /* subtle purple tint */
+  font-weight: bold;
+  border-left: 4px solid #ffd700; /* gold accent for visibility */
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
 }
 
 .notif-message {
   word-break: break-word;
+}
+
+h2,
+h3,
+h4 {
+  font-weight: bold;
+  color: #e0e7ff;
 }
 </style>
