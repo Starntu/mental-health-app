@@ -12,3 +12,4 @@ It includes but is not limited to mood tracking, chatting with other users, and 
 - **Vue** – Javascript framework used.
 - **Bootstrap** – frontend framework for styling used.
 - **Firebase + Firestore + Authentication** – used for backend database and user authentication.
+- **AI (ChatGPT)** – used solely as debugging tool.
